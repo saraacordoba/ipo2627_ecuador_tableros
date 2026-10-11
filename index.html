@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f6fb">
+  <meta name="description" content="Juego de fichas: organiza cada fila para que todas sus fichas sean del mismo tipo.">
+  <title>Proyecto Tablero · Juego de fichas</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="brand" href="#" aria-label="Proyecto Tablero, inicio">
+        <span class="brand-mark" aria-hidden="true">▦</span>
+        <span>Proyecto <strong>Tablero</strong></span>
+      </a>
+      <span class="header-tag">JUEGO DE LÓGICA</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <h1 id="page-title">Pon cada fila en orden.</h1>
+        <p class="intro-copy">Intercambia dos fichas cada vez (puedes hacer clic o arrastrarlas). El reto está completo cuando todas las fichas de cada fila son del mismo tipo.</p>
+      </section>
+
+      <section class="settings panel" aria-labelledby="settings-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PERSONALIZA LA PARTIDA</p>
+            <h2 id="settings-title">Configuración</h2>
+          </div>
+          <span class="settings-note">Los cambios inician una partida nueva</span>
+        </div>
+
+        <div class="settings-grid">
+          <div class="field">
+            <label for="dimension-select">Dimensión del tablero</label>
+            <select id="dimension-select" data-control="dimension">
+              <option value="3">3 × 3</option>
+              <option value="4" selected>4 × 4</option>
+              <option value="5">5 × 5</option>
+              <option value="6">6 × 6</option>
+              <option value="7">7 × 7</option>
+              <option value="8">8 × 8</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="size-select">Tamaño de las fichas</label>
+            <select id="size-select" data-control="size">
+              <option value="pequena">Pequeña</option>
+              <option value="mediana" selected>Mediana</option>
+              <option value="grande">Grande</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="shape-select">Forma de las fichas</label>
+            <select id="shape-select" data-control="shape">
+              <option value="geometricas" selected>Círculo, cuadrado y triángulo</option>
+              <option value="iconos">Estrella, rombo y hexágono</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="button button-primary" type="button" data-action="new">
+            <span aria-hidden="true">↻</span> Nueva partida
+          </button>
+          <button class="button button-secondary" type="button" data-action="undo" disabled>
+            <span aria-hidden="true">↶</span> Deshacer movimiento
+          </button>
+          <button class="button button-quiet" type="button" data-action="help">
+            ¿Cómo se juega?
+          </button>
+        </div>
+      </section>
+
+      <section class="game-layout" aria-label="Zona de juego">
+        <div class="board-panel panel">
+          <div class="board-heading">
+            <div>
+              <p class="eyebrow">TU TABLERO</p>
+              <h2 id="board-title">Partida en curso</h2>
+            </div>
+            <span class="dimension-pill" data-dimension-label>4 × 4</span>
+          </div>
+
+      
+
+          <div class="board-wrap">
+            <div class="board" data-grid-board role="group" aria-label="Tablero de fichas"></div>
+          </div>
+
+          <div class="board-footer">
+            <span><span class="legend-dot legend-dot-active" aria-hidden="true"></span> Ficha seleccionada</span>
+            <span data-move-label>Movimientos: 0</span>
+          </div>
+        </div>
+
+        <aside class="side-panel" aria-label="Información de la partida">
+          <section class="panel progress-panel">
+            <p class="eyebrow">PROGRESO</p>
+            <div class="progress-number"><span data-completed-count>0</span><span class="progress-separator">/</span><span data-total-count>4</span></div>
+            <p class="progress-caption">filas completadas</p>
+            <div class="progress-track" role="progressbar" aria-label="Filas completadas" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" data-progress>
+              <span data-progress-bar></span>
+            </div>
+          </section>
+
+          <section class="panel pieces-panel">
+            <p class="eyebrow">TIPOS DE FICHA</p>
+            <ul class="piece-legend" data-piece-legend>
+              <li><span class="legend-shape type-0 shape-circle" aria-hidden="true"></span><span>Tipo 1</span></li>
+              <li><span class="legend-shape type-1 shape-square" aria-hidden="true"></span><span>Tipo 2</span></li>
+              <li><span class="legend-shape type-2 shape-triangle" aria-hidden="true"></span><span>Tipo 3</span></li>
+            </ul>
+            <p class="legend-note">La forma y el color permiten distinguir los tipos.</p>
+          </section>
+
+          
+        </aside>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span>Proyecto Tablero</span>
+     
+    </footer>
+  </div>
+
+  <dialog class="help-dialog" data-modal="help" aria-labelledby="help-title">
+    <div class="dialog-header">
+      <div>
+        <p class="eyebrow">GUÍA RÁPIDA</p>
+        <h2 id="help-title">¿Cómo se juega?</h2>
+      </div>
+      <button class="icon-button" type="button" data-action="close-help" aria-label="Cerrar ayuda">×</button>
+    </div>
+    <ol class="help-steps">
+      <li><span>1</span><div><strong>Elige una ficha</strong><p>Haz clic o pulsa sobre una ficha para seleccionarla.</p></div></li>
+      <li><span>2</span><div><strong>Intercambia posiciones</strong><p>Selecciona una segunda ficha o arrastra la primera celda sobre otra.</p></div></li>
+      <li><span>3</span><div><strong>Completa todas las filas</strong><p>Cada fila debe contener fichas de un solo tipo para ganar.</p></div></li>
+    </ol>
+    <button class="button button-primary dialog-done" type="button" data-action="close-help">¡A jugar!</button>
+  </dialog>
+
+  <div class="toast" data-toast role="status" aria-live="polite" aria-atomic="true" hidden></div>
+</body>
+</html>    
