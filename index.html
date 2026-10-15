@@ -93,11 +93,6 @@
           <div class="board-wrap">
             <div class="board" data-grid-board role="group" aria-label="Tablero de fichas"></div>
           </div>
-
-          <div class="board-footer">
-            <span><span class="legend-dot legend-dot-active" aria-hidden="true"></span> Ficha seleccionada</span>
-            <span data-move-label>Movimientos: 0</span>
-          </div>
         </div>
 
         <aside class="side-panel" aria-label="Información de la partida">
@@ -109,6 +104,12 @@
               <span data-progress-bar></span>
             </div>
           </section>
+          
+          <section class="panel progress-panel">
+            <p class="eyebrow">RENDIMIENTO</p>
+              <div class="progress-number" data-move-label>0</div>
+            <p class="progress-caption">movimientos realizados</p>
+          </section>
 
           <section class="panel pieces-panel">
             <p class="eyebrow">TIPOS DE FICHA</p>
@@ -119,7 +120,6 @@
             </ul>
             <p class="legend-note">La forma y el color permiten distinguir los tipos.</p>
           </section>
-
           
         </aside>
       </section>

@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.board.dataset.size = model.size;
       this.board.setAttribute("aria-label", `Tablero de fichas de ${n} por ${n}`);
       this.dimensionLabel.textContent = `${n} × ${n}`;
-      this.moveLabel.textContent = `Movimientos: ${model.moves}`;
+      this.moveLabel.textContent = model.moves;
       this.completedCount.textContent = model.completedRows();
       this.totalCount.textContent = n;
       this.progress.setAttribute("aria-valuemax", String(n));
