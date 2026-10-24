@@ -1,8 +1,3 @@
-/* Proyecto Tablero — Controlador y Lógica Garantizada
- * Las partidas se generan partiendo de una solución y mezclándose mediante swaps, 
- * asegurando que siempre sean 100% resolubles en cualquier dimensión.
- */
-
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -174,6 +169,14 @@ document.addEventListener("DOMContentLoaded", () => {
       this.helpDialog = document.querySelector('[data-modal="help"]');
       this.toast = document.querySelector("[data-toast]");
       this.pieceLegend = document.querySelector("[data-piece-legend]");
+      this.status = document.querySelector("[data-status]");
+      this.confirmDialog = document.querySelector('[data-modal="confirm"]');
+      this.confirmMoves = document.querySelector("[data-confirm-moves]");
+      this.controls = {
+        dimension: document.querySelector('[data-control="dimension"]'),
+        size: document.querySelector('[data-control="size"]'),
+        shape: document.querySelector('[data-control="shape"]')
+      };
       this.toastTimer = null;
       this.selectedPosition = null;
       this.dragSource = null;
@@ -280,6 +283,28 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    // Pide confirmación antes de perder la partida. Devuelve una promesa: true si acepta.
+    confirmNewGame(moves) {
+      const dialog = this.confirmDialog;
+      this.confirmMoves.textContent = `${moves} ${moves === 1 ? "movimiento" : "movimientos"}`;
+      return new Promise(resolve => {
+        dialog.returnValue = "";
+        dialog.addEventListener(
+          "close",
+          () => resolve(dialog.returnValue === "confirm"),
+          { once: true }
+        );
+        dialog.showModal();
+      });
+    }
+
+    // Deja los <select> igual que el modelo (se usa al cancelar un cambio)
+    syncControls(model) {
+      this.controls.dimension.value = String(model.dimension);
+      this.controls.size.value = model.size;
+      this.controls.shape.value = model.shape;
+    }
+
     openHelp() {
       if (typeof this.helpDialog.showModal === "function") {
         this.helpDialog.showModal();
@@ -303,12 +328,12 @@ document.addEventListener("DOMContentLoaded", () => {
       this.view = view;
       this.bindEvents();
       this.view.render(this.model);
-      this.view.setStatus("Tablero mezclado y 100% resoluble. Selecciona o arrastra fichas para intercambiarlas.");
+      this.view.setStatus("Selecciona o arrastra fichas para intercambiarlas.");
     }
 
     bindEvents() {
       document.querySelector('[data-action="new"]').addEventListener("click", () => {
-        this.startNewGame("Nueva partida creada. ¡Organiza las filas!");
+        this.requestNewGame("Nueva partida creada. ¡Organiza las filas!");
       });
 
       document.querySelector('[data-action="undo"]').addEventListener("click", () => {
@@ -333,21 +358,28 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       document.querySelector('[data-control="dimension"]').addEventListener("change", event => {
-        if (this.model.setDimension(event.target.value)) {
-          this.startNewGame(`Tablero cambiado a ${this.model.dimension} × ${this.model.dimension}.`);
-        }
+        const value = event.target.value;
+        this.requestNewGame(
+          `Tablero cambiado a ${value} × ${value}.`,
+          () => this.model.setDimension(value)
+        );
       });
 
       document.querySelector('[data-control="size"]').addEventListener("change", event => {
-        if (this.model.setSize(event.target.value)) {
-          this.startNewGame(`Tamaño de ficha cambiado a ${event.target.selectedOptions[0].text.toLowerCase()}.`);
-        }
+        const value = event.target.value;
+        const text = event.target.selectedOptions[0].text.toLowerCase();
+        this.requestNewGame(
+          `Tamaño de ficha cambiado a ${text}.`,
+          () => this.model.setSize(value)
+        );
       });
 
       document.querySelector('[data-control="shape"]').addEventListener("change", event => {
-        if (this.model.setShape(event.target.value)) {
-          this.startNewGame("Se ha cambiado la forma de las fichas y creado una nueva partida.");
-        }
+        const value = event.target.value;
+        this.requestNewGame(
+          "Se ha cambiado la forma de las fichas y creado una nueva partida.",
+          () => this.model.setShape(value)
+        );
       });
 
       this.view.board.addEventListener("click", event => {
@@ -460,6 +492,26 @@ document.addEventListener("DOMContentLoaded", () => {
         this.view.setStatus(`Intercambio realizado. Filas completadas: ${this.model.completedRows()} de ${this.model.dimension}.`);
         this.view.showToast("Fichas intercambiadas.");
       }
+    }
+
+    // Hay algo que perder: se ha movido alguna ficha y la partida no ha terminado
+    hasProgress() {
+      return this.model.moves > 0 && !this.model.finished;
+    }
+
+    // Todo lo que reinicia la partida pasa por aquí. El cambio de ajuste solo se
+    // aplica al modelo DESPUÉS de que la persona confirme (prevención de errores).
+    async requestNewGame(message, applyChange = null) {
+      if (this.hasProgress()) {
+        const accepted = await this.view.confirmNewGame(this.model.moves);
+        if (!accepted) {
+          this.view.syncControls(this.model);   // el select vuelve a su valor real
+          this.view.setStatus("Cambio cancelado. Sigues con tu partida.");
+          return;
+        }
+      }
+      if (applyChange) applyChange();
+      this.startNewGame(message);
     }
 
     startNewGame(message) {

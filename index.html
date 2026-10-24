@@ -88,7 +88,7 @@
             <span class="dimension-pill" data-dimension-label>4 × 4</span>
           </div>
 
-      
+          <p class="board-status" data-status role="status" aria-live="polite" aria-atomic="true"></p>
 
           <div class="board-wrap">
             <div class="board" data-grid-board role="group" aria-label="Tablero de fichas"></div>
@@ -147,6 +147,18 @@
     <button class="button button-primary dialog-done" type="button" data-action="close-help">¡A jugar!</button>
   </dialog>
 
-  <div class="toast" data-toast role="status" aria-live="polite" aria-atomic="true" hidden></div>
+  <dialog class="help-dialog confirm-dialog" data-modal="confirm" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+    <form method="dialog">
+      <p class="eyebrow">ANTES DE CONTINUAR</p>
+      <h2 id="confirm-title">¿Empezar una partida nueva?</h2>
+      <p class="confirm-text" id="confirm-text">Tienes una partida en curso con <strong data-confirm-moves>0 movimientos</strong>. Si continúas, perderás tu progreso.</p>
+      <div class="confirm-actions">
+        <button class="button button-secondary" value="cancel" autofocus>Seguir jugando</button>
+        <button class="button button-primary" value="confirm">Empezar partida nueva</button>
+      </div>
+    </form>
+  </dialog>
+
+ 
 </body>
 </html>    
